@@ -1,0 +1,20 @@
+executor: clean-image-resources
+input:
+  imageName: ""
+  cleanContainers: true
+  cleanCaches: true
+steps:
+  - assertions:
+    - '"{{.input.imageName}}" ShouldNotEqual ""'
+  - script: docker ps -aq --filter ancestor={{.input.imageName}}
+    vars:
+    containers:
+      from: result.systemout
+  - script: '"{{.input.cleanContainers}}" == "true" && docker rm --force {{.containers}} || true'
+  - script: docker image remove {{.input.imageName}}
+    info: "Cleaning image: '{{.input.imageName}}'"
+  - script: docker volume ls --format '{{.Name}}' | grep {{.input.imageName}} | tr '\n' ' '
+    vars:
+      volumes:
+        from: result.systemout
+  - script: '"{{.input.cleanCaches}}" == "true" && docker volume rm --force {{.volumes}} || true'

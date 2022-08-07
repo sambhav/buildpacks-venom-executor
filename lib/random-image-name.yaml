@@ -1,0 +1,3 @@
+executor: random-image-name
+output:
+  name: 'venom-pack-test-{{ randAlpha 10 | lower }}'

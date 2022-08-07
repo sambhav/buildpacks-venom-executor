@@ -1,0 +1,12 @@
+name: Test pack build
+testcases:
+- name: Build & clean
+  steps:
+  - type: random-image-name
+    vars:
+      imageName:
+        from: result.name
+  - type: pack
+    imageName: '{{.imageName}}'
+  - type: clean-image-resources
+    imageName: '{{.imageName}}'
