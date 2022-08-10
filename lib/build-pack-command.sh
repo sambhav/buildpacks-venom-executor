@@ -19,7 +19,7 @@ pack_command="pack build $image_name"
 # Add the buildpacks
 pack_command+=$(jq -r '[""] + .buildpacks | join(" -b ")' input.json)
 # Add the env vars
-pack_command+=$(jq -rj '.env | to_entries | .[] | " -e \"" + .key + "=" + .value + "\""' input.json)
+pack_command+=$(jq -rj 'if has("env") then .env | to_entries | .[] | " -e \"" + .key + "=" + .value + "\"" else empty end' input.json)
 # Add the project path
 pack_command+=$(jq -r 'if .path then " -p \"" + .path + "\"" else empty end' input.json)
 # Add the sbom output dir

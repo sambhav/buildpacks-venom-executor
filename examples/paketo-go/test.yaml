@@ -1,0 +1,18 @@
+name: Test Paketo Go Buildpacks
+testcases:
+- name: Build a go application and test the output
+  steps:
+  - type: random-image-name
+    vars:
+      imageName:
+        from: result.name
+  - type: pack
+    imageName: '{{.imageName}}'
+    options:
+      path: testdata/build
+      buildpacks: ['gcr.io/paketo-buildpacks/go:latest']
+      builder: paketobuildpacks/builder:tiny
+  - script: docker run {{.imageName}}
+    assertions:
+      - result.code ShouldEqual 0
+      - result.systemout ShouldEqual 'Hello World!'
