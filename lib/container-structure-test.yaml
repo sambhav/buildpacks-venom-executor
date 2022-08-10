@@ -1,0 +1,31 @@
+executor: container-structure-test
+input:
+  imageName: ''
+  config: {}
+  options:
+    verbose: false
+    noColor: false
+    pull: false
+steps:
+  - assertions:
+    - '"{{.input.imageName}}" ShouldNotEqual ""'
+  # Process input args and build the pack command
+  - script: 'bash $(dirname {{.venom.executor.filename}})/build-container-structure-test-command.sh {{.input.imageName}} {{.input.config | toJSON}} {{.input.options | toJSON}}'
+    vars:
+      command:
+        from: result.systemout
+  # Run the pack build command
+  - info: "Testing image: '{{.input.imageName}}' with command '{{ .command | trim }}'"
+  - script: '{{ .command | trim }}'
+    vars:
+      systemerr:
+        from: result.systemerr
+      systemout:
+        from: result.systemout
+      code:
+        from: result.code
+output:
+  systemout: '{{.systemout}}'
+  systemerr: '{{.systemerr}}'
+  code: '{{.code}}'
+  command: '{{.command}}'

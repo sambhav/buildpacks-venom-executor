@@ -19,7 +19,7 @@ steps:
   - assertions:
     - '"{{.input.imageName}}" ShouldNotEqual ""'
   # Process input args and build the pack command
-  - script: 'bash $(dirname {{.venom.executor.filename}})/build-command.sh {{.input.imageName}} {{.input.options | toJSON}}'
+  - script: 'bash $(dirname {{.venom.executor.filename}})/build-pack-command.sh {{.input.imageName}} {{.input.options | toJSON}}'
     vars:
       command:
         from: result.systemout
@@ -33,8 +33,14 @@ steps:
         from: result.systemout
       code:
         from: result.code
+  # Add the image inspection info to assert on buildpacks/process data
+  - script: 'pack inspect {{.input.imageName}} --output json -q'
+    vars:
+      imageinfo:
+        from: result.systemoutjson
 output:
   systemout: '{{.systemout}}'
   systemerr: '{{.systemerr}}'
   code: '{{.code}}'
   command: '{{.command}}'
+  imageInfo: '{{.imageinfo}}'
