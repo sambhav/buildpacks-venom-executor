@@ -1,3 +1,3 @@
 tasks:
   - name: Setup
-    before: chmod ugo+w /var/run/docker.sock && brew install buildpacks/tap/pack && pack config pull-policy if-not-present
+    before: chmod ugo+w /var/run/docker.sock && brew install buildpacks/tap/pack && pack config pull-policy if-not-present && wget https://github.com/ovh/venom/releases/download/v1.1.0-beta.4/venom.linux-amd64 && chmod +x venom.linux-amd64 && mv venom.linux-amd64 ~/.local/bin && mkdir -p ~/venom.d && ln -s $(pwd)/lib ~/venom.d/  
