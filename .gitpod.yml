@@ -1,0 +1,3 @@
+tasks:
+  - name: Setup
+    before: chmod ugo+w /var/run/docker.sock && brew install buildpacks/tap/pack && pack config pull-policy if-not-present
