@@ -15,32 +15,11 @@ input:
     network: ~
     noColor: ~
     extraArgs: ~
-    debug: ~
 steps:
   - assertions:
     - '"{{.input.imageName}}" ShouldNotEqual ""'
-  # Process input args
-  # we depend on gomplate to templatize and generate the pack build string since venom
-  # templating doesn't include the full capabilities of go templating
-  - vars:
-      template:
-        default: >-
-          pack build {{ .input.imageName }}
-          [[ if has .input "buildpacks" ]][[ range $bp := .input.buildpacks ]]-b [[ . ]] [[end]][[end]]
-          [[ if has .input "env" ]][[- range $key, $value := .input.env ]]-e "[[ $key ]]=[[ $value ]]" [[end]][[end]]
-          [[ if has .input "path" ]][[- if .input.path ]]--path [[.input.path]] [[end]][[end]]
-          [[ if has .input "verbose" ]][[- if or .input.verbose .input.debug ]]-v [[end]][[end]]
-          [[ if has .input "debug" ]][[- if .input.debug ]]-e BP_DEBUG=true [[end]][[end]]
-          [[ if has .input "clearCache" ]][[- if .input.clearCache ]]--clear-cache [[end]][[end]]
-          [[ if has .input "trustBuilder" ]][[- if .input.trustBuilder ]]--trust-builder [[end]][[end]]
-          [[ if has .input "sbomOutputDir" ]][[- if .input.sbomOutputDir ]]--sbom-output-dir [[ .input.sbomOutputDir ]] [[end]][[end]]
-          [[ if has .input "pullPolicy" ]][[- if .input.pullPolicy ]]--pull-policy [[ .input.pullPolicy ]] [[end]][[end]]
-          [[ if has .input "noPull" ]][[- if .input.noPull ]]--no-pull [[end]][[end]]
-          [[ if has .input "gid" ]][[- if .input.gid ]]--gid [[ .input.gid ]] [[end]][[end]]
-          [[ if has .input "network" ]][[- if .input.network ]]--network [[ .input.network ]] [[end]][[end]]
-          [[ if has .input "noColor" ]][[- if .input.noColor ]]--no-color [[end]][[end]]
-          [[ if has .input "extraArgs" ]][[- if .input.extraArgs ]][[ .input.extraArgs ]] [[end]][[end]]
-  - script: echo {{ .input.options | toJSON }} | gomplate --context input=stdin:///in.json -i '{{ .template }}' --left-delim '[[' --right-delim ']]'
+  # Process input args and build the pack command
+  - script: 'bash $(dirname {{.venom.executor.filename}})/build-command.sh {{.input.imageName}} {{.input.options | toJSON}}'
     vars:
       command:
         from: result.systemout
