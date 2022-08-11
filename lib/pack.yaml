@@ -5,6 +5,7 @@ input:
     buildpacks: []
     env: {}
     path: ~
+    builder: ~
     verbose: ~
     clearCache: ~
     trustBuilder: ~
@@ -34,13 +35,13 @@ steps:
       code:
         from: result.code
   # Add the image inspection info to assert on buildpacks/process data
-  - script: 'pack inspect {{.input.imageName}} --output json -q'
+  - script: 'pack inspect {{.input.imageName}} --output json -q | jq -r .local_info'
     vars:
       imageinfo:
-        from: result.systemoutjson
+        from: result.systemout
 output:
   systemout: '{{.systemout}}'
   systemerr: '{{.systemerr}}'
   code: '{{.code}}'
   command: '{{.command}}'
-  imageInfo: '{{.imageinfo}}'
+  imageinfo: '{{.imageinfo }}'

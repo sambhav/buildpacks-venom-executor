@@ -22,6 +22,8 @@ pack_command+=$(jq -r '[""] + .buildpacks | join(" -b ")' input.json)
 pack_command+=$(jq -rj 'if has("env") then .env | to_entries | .[] | " -e \"" + .key + "=" + .value + "\"" else empty end' input.json)
 # Add the project path
 pack_command+=$(jq -r 'if .path then " -p \"" + .path + "\"" else empty end' input.json)
+# Add the builder
+pack_command+=$(jq -r 'if .builder then " --builder \"" + .builder + "\"" else empty end' input.json)
 # Add the sbom output dir
 pack_command+=$(jq -r 'if .sbomOutputDir then " --sbom-output-dir \"" + .sbomOutputDir + "\"" else empty end' input.json)
 # Add the extra args

@@ -1,18 +1,25 @@
 name: Test Paketo Go Buildpacks
+vars:
+  imageName: test
 testcases:
 - name: Build a go application and test the output
   steps:
-  - type: random-image-name
-    vars:
-      imageName:
-        from: result.name
   - type: pack
     imageName: '{{.imageName}}'
     options:
       path: testdata/build
-      buildpacks: ['gcr.io/paketo-buildpacks/go:latest']
       builder: paketobuildpacks/builder:tiny
-  - script: docker run {{.imageName}}
     assertions:
-      - result.code ShouldEqual 0
-      - result.systemout ShouldEqual 'Hello World!'
+      - result.imageinfojson.buildpacks.buildpacks0.id ShouldEqual paketo-buildpacks/ca-certificates
+      - result.imageinfojson.buildpacks.buildpacks1.id ShouldEqual paketo-buildpacks/go-dist
+      - result.imageinfojson.buildpacks.buildpacks2.id ShouldEqual paketo-buildpacks/go-build
+  - type: container-structure-test
+    imageName: '{{.imageName}}'
+    config:
+      schemaVersion: 2.0.0
+      commandTests:
+        - name: default
+          command: workspace
+          expectedOutput: ["Hello World!"]
+  - type: clean-image-resources
+    imageName: '{{.imageName}}'

@@ -15,7 +15,7 @@ if [ -z "$image_name" ]; then
     exit 1
 fi
 
-test_command="container-structure-test test --output json --image $image_name --config config.json"
+test_command="container-structure-test test --output json --image $image_name --config $(pwd)/config.json"
 # Add verbose
 test_command+=$(jq -r 'if .verbose then " --verbosity debug" else empty end' input.json)
 # Add pull
