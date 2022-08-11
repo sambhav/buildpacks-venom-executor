@@ -1,12 +1,12 @@
 tasks:
   - name: Setup
-    init: >-
+    before: >-
       chmod ugo+w /var/run/docker.sock &&
       brew install buildpacks/tap/pack &&
       pack config pull-policy if-not-present &&
       wget https://github.com/ovh/venom/releases/download/v1.1.0-beta.4/venom.linux-amd64 &&
       chmod +x venom.linux-amd64 &&
-      mv venom.linux-amd64 /usr/local/bin/venom &&
+      sudo mv venom.linux-amd64 /usr/local/bin/venom &&
       curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64 &&
       chmod +x container-structure-test-linux-amd64 &&
       sudo mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test &&
