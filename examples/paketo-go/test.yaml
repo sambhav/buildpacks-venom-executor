@@ -1,9 +1,11 @@
 name: Test Paketo Go Buildpacks
-vars:
-  imageName: test
 testcases:
 - name: Build a go application and test the output
   steps:
+  - type: random-image-name
+    vars:
+      imageName:
+        from: result.name
   - type: pack
     imageName: '{{.imageName}}'
     options:
